@@ -1,0 +1,29 @@
+﻿Dwelling,Room,Clear width E-W (mm),Clear depth N-S (mm),Area (m2),x1,y1,x2,y2,Dimension basis,Documented minimum area (m2),Documented rectangle (m),Meets documented rectangle,Requirement source,Status
+A,Bedroom 1,4000,3700,14.80,300,300,4300,4000,Clear internal (finished face to finished face),14.00,3.50 x 4.00,Yes,"Logistics r24-25 (PROPOSED); NDSS 10(d),(e)",Approved concept baseline C2 (24 Oct 2026)
+A,Quiet work room,4000,2500,10.00,300,4100,4300,6600,Clear internal (finished face to finished face),8.00,2.50 x 3.20,Yes,Logistics r28-29 (PROPOSED),Approved concept baseline C2 (24 Oct 2026)
+A,Utility and plant,2500,2000,5.00,300,6700,2800,8700,Clear internal (finished face to finished face),4.00,2.00 x 2.00,Yes,Logistics r34-35 (PROPOSED),Approved concept baseline C2 (24 Oct 2026)
+A,Store,1400,2000,2.80,2900,6700,4300,8700,Clear internal (finished face to finished face),2.10,1.05 x 2.00,Yes,Logistics r36-37 (PROPOSED); NDSS Table 1 >= 2.0 m2,Approved concept baseline C2 (24 Oct 2026)
+A,Ngaji / kitchen,4000,3200,12.80,300,8800,4300,12000,Clear internal (finished face to finished face),12.00,3.00 x 4.00,Yes,Logistics r22-23 (PROPOSED); Research L67,Approved concept baseline C2 (24 Oct 2026)
+A,Hall,1500,6600,9.90,4400,300,5900,6900,Clear internal (finished face to finished face),-,-,n/a (circulation),"Logistics r41, r44 (circulation)",Approved concept baseline C2 (24 Oct 2026)
+A,Bedroom 2,3200,4000,12.80,6000,300,9200,4300,Clear internal (finished face to finished face),12.00,3.00 x 4.00,Yes,"Logistics r26-27 (PROPOSED); NDSS 10(d),(e)",Approved concept baseline C2 (24 Oct 2026)
+A,Bathroom,3200,2500,8.00,6000,4400,9200,6900,Clear internal (finished face to finished face),7.50,2.50 x 3.00,Yes,Logistics r30-31 (PROPOSED),Approved concept baseline C2 (24 Oct 2026)
+A,Living / dining,4800,5000,24.00,4400,7000,9200,12000,Clear internal (finished face to finished face),24.00,4.80 x 5.00,Yes,Logistics r20-21 (PROPOSED),Approved concept baseline C2 (24 Oct 2026)
+B (mirrored),Bedroom 1,4000,3700,14.80,14300,300,18300,4000,Clear internal (finished face to finished face),14.00,3.50 x 4.00,Yes,"Logistics r24-25 (PROPOSED); NDSS 10(d),(e)",Approved concept baseline C2 (24 Oct 2026)
+B (mirrored),Quiet work room,4000,2500,10.00,14300,4100,18300,6600,Clear internal (finished face to finished face),8.00,2.50 x 3.20,Yes,Logistics r28-29 (PROPOSED),Approved concept baseline C2 (24 Oct 2026)
+B (mirrored),Utility and plant,2500,2000,5.00,15800,6700,18300,8700,Clear internal (finished face to finished face),4.00,2.00 x 2.00,Yes,Logistics r34-35 (PROPOSED),Approved concept baseline C2 (24 Oct 2026)
+B (mirrored),Store,1400,2000,2.80,14300,6700,15700,8700,Clear internal (finished face to finished face),2.10,1.05 x 2.00,Yes,Logistics r36-37 (PROPOSED); NDSS Table 1 >= 2.0 m2,Approved concept baseline C2 (24 Oct 2026)
+B (mirrored),Ngaji / kitchen,4000,3200,12.80,14300,8800,18300,12000,Clear internal (finished face to finished face),12.00,3.00 x 4.00,Yes,Logistics r22-23 (PROPOSED); Research L67,Approved concept baseline C2 (24 Oct 2026)
+B (mirrored),Hall,1500,6600,9.90,12700,300,14200,6900,Clear internal (finished face to finished face),-,-,n/a (circulation),"Logistics r41, r44 (circulation)",Approved concept baseline C2 (24 Oct 2026)
+B (mirrored),Bedroom 2,3200,4000,12.80,9400,300,12600,4300,Clear internal (finished face to finished face),12.00,3.00 x 4.00,Yes,"Logistics r26-27 (PROPOSED); NDSS 10(d),(e)",Approved concept baseline C2 (24 Oct 2026)
+B (mirrored),Bathroom,3200,2500,8.00,9400,4400,12600,6900,Clear internal (finished face to finished face),7.50,2.50 x 3.00,Yes,Logistics r30-31 (PROPOSED),Approved concept baseline C2 (24 Oct 2026)
+B (mirrored),Living / dining,4800,5000,24.00,9400,7000,14200,12000,Clear internal (finished face to finished face),24.00,4.80 x 5.00,Yes,Logistics r20-21 (PROPOSED),Approved concept baseline C2 (24 Oct 2026)
+Per dwelling,NIFA (sum of rooms),,,100.10,,,,,Clear internal,,,,Project definition,
+Per dwelling,Internal partitions (100 mm),,,4.03,,,,,Wall plan area,,,,Thickness PROVISIONAL,
+Per dwelling,GIA,,,104.13,,,,,Internal faces of perimeter walls incl. partitions,,,,NDSS para 8 method; budget 110 m2 (Logistics r17),
+Both dwellings,GIA x 2,,,208.26,,,,,As above,,,,Research L59 programme: 220 m2,
+Building,External walls (300 mm),,,18.06,,,,,Wall plan area,,,,Thickness PROVISIONAL,
+Building,Party (separating) wall (200 mm),,,2.46,,,,,Wall plan area,,,,Thickness PROVISIONAL; fire/acoustic spec not designed,
+Building,"Footprint 18,600 x 12,300",,,228.78,,,,,External faces,,,,Check: 208.26 + 18.06 + 2.46 = 228.78,
+A (external; B mirrored),"Porch (own, per home)",2400,2000,4.80,3950,-2000,6350,0,External outline,,,,ASSUMPTION: 2.4 x 2.0 (>= r45-46 1.5 x 1.5),PROVISIONAL - excluded from GIA
+A (external; B mirrored),Patio (west),1800,5000,9.00,-1800,7000,0,12000,External outline,,,,"ASSUMPTION: 1.8 x 5.0, unsourced",PROVISIONAL - excluded from GIA
+A (external; B mirrored),Conservatory (provisional),2500,1500,3.19,4500,12300,7000,13800,External outline (hexagon; x/y = bounding box),,,,PROVISIONAL: S-08 2.5 x 1.5 hexagon,PROVISIONAL - excluded from GIA
