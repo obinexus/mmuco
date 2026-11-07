@@ -1,26 +1,17 @@
-"""Generate MMUCO HIVE-E + HIVE-W concept detail DXF (rev 3).
+"""Generate MMUCO HIVE-E + HIVE-W concept detail DXF (rev 4).
 
-Rev 3 changes from rev 2:
-- Hive width enlarged from 10,000 to 10,750 mm (outward expansion only,
-  patio boundary fixed). Outer bed perimeter now 1,500 mm (was 750).
-- Service strip 2,750 mm wide; all stations have >= 1,500 mm clear approach.
-- Door swings verified against continuous route.
-- Sheet layout: two enlarged hive details + small site-location inset.
-  Duplex outline reduced to inset only.
-- 1,500 mm described as project design target throughout.
+Concept layout accepted by owner; annotation cleanup only.
+
+Rev 4 changes from rev 3:
+- HIVE-W / HIVE-E headings moved outside envelope boundaries.
+- Descriptive text removed from plans; only short component IDs remain.
+- Dimensions and clearance labels repositioned to avoid overlap with
+  beds, equipment, irrigation lines and door swings.  Leaders used
+  where labels cannot sit adjacent to the feature they annotate.
+- All geometry, component positions and clearances unchanged.
 
 Dimension chain (width):
   1,500(outer) + 1,000 + 1,500 + 1,000 + 1,500 + 1,000 + 500(gap) + 2,750(svc) = 10,750
-
-Components per hive (short IDs on drawing, full names in schedule):
-  CB01-06  Crop beds 1,000 x 3,000 mm (3 cols x 2 rows)
-  IR01     Irrigation station / water point
-  TP01     Tool cupboard 1,200 x 600
-  TP02     Potting bench 1,500 x 750
-  HV01     Harvest bench 1,500 x 750
-  HV02     Crate staging 1,000 x 500
-  HV03     Seed cupboard 1,200 x 500
-  CP01-02  Compost bays 1,000 x 1,000 each
 """
 import math, os
 
@@ -144,6 +135,14 @@ def dim_line(x0, y0, x1, y1, label, offset=0, vert=False):
         s += T("H-DIM", (x0+x1)/2 - len(label)*40, y0+oy+300, TH["xs"], label)
     return s
 
+def leader(layer, x0, y0, x1, y1, label, rgb=None):
+    """Leader line from (x0,y0) to (x1,y1) with label at the endpoint."""
+    s = L(layer, x0, y0, x1, y1, rgb)
+    s += L(layer, x0-80, y0-80, x0+80, y0+80, rgb)
+    s += L(layer, x0-80, y0+80, x0+80, y0-80, rgb)
+    s += T(layer, x1+150, y1-50, TH["xs"], label, rgb)
+    return s
+
 # ================================================================
 # LAYOUT CONSTANTS (mm)
 # ================================================================
@@ -197,11 +196,11 @@ def draw_hive(prefix, ox, oy, patio_on_right=True):
     # Envelope (dashed)
     e += R("H-ENVELOPE", hx0, hy0, hx1, hy1, PAL["dwell"])
 
-    # Zone label
-    e += T("H-LABEL", (hx0+hx1)/2 - 1200, (hy0+hy1)/2 + 2000, TH["zone"],
+    # Zone heading — outside envelope, above top edge
+    e += T("H-LABEL", (hx0+hx1)/2 - 1200, hy1 + 2800, TH["zone"],
            f"HIVE-{prefix}")
-    e += T("H-LABEL", (hx0+hx1)/2 - 1800, (hy0+hy1)/2 + 1400, TH["det"],
-           f"10,750 x 10,500 mm PROVISIONAL")
+    e += T("H-LABEL", (hx0+hx1)/2 - 2200, hy1 + 2100, TH["det"],
+           "10,750 \\U+00D7 10,500 mm \\U+2014 PROVISIONAL")
 
     if patio_on_right:
         # HIVE-W: outer on left, beds from left, service on right (patio side)
@@ -236,49 +235,49 @@ def draw_hive(prefix, ox, oy, patio_on_right=True):
         for ri, (ry0, ry1) in enumerate(bed_rows):
             bid = f"{prefix}-CB{bed_num:02d}"
             e += R("H-BED", col_x, ry0, col_x + BED_W, ry1, PAL["crop"])
-            e += T("H-LABEL", col_x + 100, (ry0+ry1)/2 + 100, TH["xs"], bid)
-            e += T("H-LABEL", col_x + 100, (ry0+ry1)/2 - 300, TH["xs"], "1.0x3.0")
+            e += T("H-LABEL", col_x + 100, (ry0+ry1)/2 - 50, TH["xs"], bid)
             bed_num += 1
 
     # ---- MEASURE AND DIMENSION PATH CLEARANCES ----
-    # South path
+    # South path — dim outside envelope (below bottom edge)
     south_clr = BED_ROW1_Y0
     track(prefix, "South perimeter path", south_clr)
-    e += dim_line(sorted_cols[0], hy0, sorted_cols[0], hy0 + BED_ROW1_Y0,
-                  f"{south_clr:,}", offset=-600, vert=True)
+    dim_ref_x = hx0 - 800 if patio_on_right else hx1 + 800
+    e += dim_line(dim_ref_x, hy0, dim_ref_x, hy0 + BED_ROW1_Y0,
+                  f"{south_clr:,}", offset=0, vert=True)
 
-    # North path
+    # North path — dim outside envelope
     north_clr = HIVE_DEPTH - BED_ROW2_Y1
     track(prefix, "North perimeter path", north_clr)
-    e += dim_line(sorted_cols[0], hy0 + BED_ROW2_Y1, sorted_cols[0], hy1,
-                  f"{north_clr:,}", offset=-600, vert=True)
+    e += dim_line(dim_ref_x, hy0 + BED_ROW2_Y1, dim_ref_x, hy1,
+                  f"{north_clr:,}", offset=0, vert=True)
 
-    # Middle path
+    # Middle path — dim outside envelope
     mid_clr = BED_ROW2_Y0 - BED_ROW1_Y1
     track(prefix, "Path between bed rows", mid_clr)
-    e += dim_line(sorted_cols[1], hy0 + BED_ROW1_Y1, sorted_cols[1], hy0 + BED_ROW2_Y0,
-                  f"{mid_clr:,}", offset=-600, vert=True)
+    e += dim_line(dim_ref_x, hy0 + BED_ROW1_Y1, dim_ref_x, hy0 + BED_ROW2_Y0,
+                  f"{mid_clr:,}", offset=0, vert=True)
 
-    # Between-column aisles
+    # Between-column aisles — positioned in the inter-row gap (clear of beds)
     for i in range(len(sorted_cols) - 1):
         gap = sorted_cols[i+1] - (sorted_cols[i] + BED_W)
         track(prefix, f"Aisle cols {i+1}-{i+2}", gap)
-        mid_y = hy0 + (BED_ROW1_Y0 + BED_ROW1_Y1) / 2
-        e += dim_line(sorted_cols[i] + BED_W, mid_y,
-                      sorted_cols[i+1], mid_y,
-                      f"{gap:,}", offset=-400)
+        aisle_dim_y = hy0 + (BED_ROW1_Y1 + BED_ROW2_Y0) / 2
+        e += dim_line(sorted_cols[i] + BED_W, aisle_dim_y,
+                      sorted_cols[i+1], aisle_dim_y,
+                      f"{gap:,}", offset=0)
 
-    # Outer perimeter
+    # Outer perimeter — dim in the inter-row gap (clear of bed geometry)
     if patio_on_right:
         outer_perim_actual = sorted_cols[0] - hx0
-        e += dim_line(hx0, hy0 + BED_ROW2_Y0 + 1500,
-                      sorted_cols[0], hy0 + BED_ROW2_Y0 + 1500,
-                      f"{outer_perim_actual:,}", offset=0)
+        e += dim_line(hx0, hy0 + (BED_ROW1_Y1 + BED_ROW2_Y0) / 2,
+                      sorted_cols[0], hy0 + (BED_ROW1_Y1 + BED_ROW2_Y0) / 2,
+                      f"{outer_perim_actual:,}", offset=-600)
     else:
         outer_perim_actual = hx1 - (sorted_cols[2] + BED_W)
-        e += dim_line(sorted_cols[2] + BED_W, hy0 + BED_ROW2_Y0 + 1500,
-                      hx1, hy0 + BED_ROW2_Y0 + 1500,
-                      f"{outer_perim_actual:,}", offset=0)
+        e += dim_line(sorted_cols[2] + BED_W, hy0 + (BED_ROW1_Y1 + BED_ROW2_Y0) / 2,
+                      hx1, hy0 + (BED_ROW1_Y1 + BED_ROW2_Y0) / 2,
+                      f"{outer_perim_actual:,}", offset=-600)
     track(prefix, "Outer perimeter path", outer_perim_actual)
 
     # Gap beds to service
@@ -338,11 +337,11 @@ def draw_hive(prefix, ox, oy, patio_on_right=True):
     # Working space dashed rect in front of compost
     front_x = item_front(ix0, ix1)
     if item_dir < 0:
-        e += R("H-WORK", front_x - 1500, iy0, front_x, iy1b)
+        ws_x_far = front_x - 1500
+        e += R("H-WORK", ws_x_far, iy0, front_x, iy1b)
     else:
-        e += R("H-WORK", front_x, iy0, front_x + 1500, iy1b)
-    e += T("H-LABEL", front_x + item_dir*(-750-300), (iy0+iy1b)/2, TH["xs"],
-           f"1,500 CLEAR")
+        ws_x_far = front_x + 1500
+        e += R("H-WORK", front_x, iy0, ws_x_far, iy1b)
 
     # -- IR01: Irrigation 1500x800 --
     ir_y0 = cp2_y0 + 1100 + 200
@@ -430,6 +429,19 @@ def draw_hive(prefix, ox, oy, patio_on_right=True):
     # Service strip aisle dimension (clear width at narrowest: compost)
     min_aisle = aisle_clear(1000)  # compost is deepest at 1000mm
     track(prefix, "Service aisle (min, at compost)", min_aisle)
+
+    # Consolidated clearance leader — outside the envelope, pointing into
+    # the service aisle mid-height, labelling the minimum working clearance
+    leader_target_y = hy0 + 5000
+    if patio_on_right:
+        ldr_from_x = hx1 + 1800
+        ldr_to_x = svc_x0 + (svc_w - 200 - 1000) / 2  # mid-aisle at compost depth
+    else:
+        ldr_from_x = hx0 - 1800
+        ldr_to_x = svc_x1 - (svc_w - 200 - 1000) / 2
+    e += leader("H-DIM", ldr_to_x, leader_target_y,
+                ldr_from_x, leader_target_y,
+                f"SVC AISLE >= {min_aisle:,} CLEAR", PAL["dim_r"])
 
     # ---- IRRIGATION BRANCHES ----
     # Main line from IR01 toward bed zone
@@ -592,11 +604,11 @@ tb_y = -9500
 e += T("H-LABEL", HW_OX, tb_y, TH["head"],
        "MMUCO HIVE-E + HIVE-W -- CONCEPT DETAIL -- NOT FOR CONSTRUCTION")
 e += T("H-LABEL", HW_OX, tb_y-500, TH["sub"],
-       "hive-east-and-west rev 3 | Units mm 1:1 | Drawing ref: HD-01")
+       "hive-east-and-west rev 4 | Units mm 1:1 | Drawing ref: HD-01")
 e += T("H-LABEL", HW_OX, tb_y-900, TH["xs"],
-       f"Hive envelopes PROVISIONAL {HIVE_WIDTH:,} x {HIVE_DEPTH:,} mm.")
+       "Concept layout accepted by owner; annotation cleanup only.")
 e += T("H-LABEL", HW_OX, tb_y-1200, TH["xs"],
-       f"Width expanded from 10,000 to {HIVE_WIDTH:,} (outward, patio boundary fixed).")
+       f"Hive envelopes PROVISIONAL {HIVE_WIDTH:,} x {HIVE_DEPTH:,} mm.")
 e += T("H-LABEL", HW_OX, tb_y-1500, TH["xs"],
        "All clearances are project design targets, not proof of regulatory compliance.")
 
@@ -669,17 +681,16 @@ lg_y -= 400
 e += T("LEGEND", lg_x, lg_y, TH["room"], "NOTES")
 lg_y -= 350
 for n in [
-    f"1. Width expanded from 10,000 to {HIVE_WIDTH:,} mm.",
-    "   Outer perimeter increased 750 -> 1,500 mm.",
+    "1. Concept layout accepted by owner (rev 4).",
+    f"2. Width: {HIVE_WIDTH:,} mm (outer perim 1,500).",
     "   Patio boundary unchanged.",
-    f"2. Service strip {SVC_W:,} mm wide.",
+    f"3. Service strip {SVC_W:,} mm wide.",
     "   All stations >= 1,500 mm clear approach.",
-    f"3. Depth {HIVE_DEPTH:,} (1,300 mm beyond dwelling north face).",
-    f"   {HIVE_DEPTH - DW_D:,} mm extension does not conflict with",
-    "   conservatory zone (top at 13,200) or recreational garden.",
-    "4. 1,500 mm is the PROJECT DESIGN TARGET.",
+    f"4. Depth {HIVE_DEPTH:,} (1,300 mm beyond dwelling north).",
+    "   No conflict with conservatory or rec. garden.",
+    "5. 1,500 mm is the PROJECT DESIGN TARGET.",
     "   Not proof of regulatory compliance.",
-    "5. North assumed (PA-07).",
+    "6. North assumed (PA-07).",
 ]:
     e += T("LEGEND", lg_x+100, lg_y, TH["xs"], n)
     lg_y -= 230
